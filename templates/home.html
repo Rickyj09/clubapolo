@@ -1,0 +1,137 @@
+
+{% extends "layout.html"%}
+{% block content %}
+			<main>
+				<div id="slide-wrap">
+					<section id="inicio">
+					  <ul class="slider1">
+						<li><img src="/static/img/foto21.jpg" alt=""></li>
+						<li><img src="/static/img/foto23.jpg" alt=""></li>
+						<li><img src="/static/img/foto25.jpg" alt=""></li>
+						<li><img src="/static/img/foto31.jpg" alt=""></li>
+					  </ul>
+					</section>
+				  </div>
+				</section>
+				<section id="nosotros" class="seccion">
+					<div class="container">
+					    <p>Con 28 años de experiencia al servicio de la comunidad.</p>
+					</div>
+				</section>
+				<section id="servicios" class="seccion">
+					<div class="container">
+						<div class="row">
+							<div class="columna columna-33 columna-mobile-100">
+								<div class="bloque-servicio">
+									<div class="bloque-img-servcio cuadrado-perfecto">
+										<img src="/static/img/foto12.jpeg">
+									</div>
+									<div class="bloque-contenido-servicio">
+										<h3>Conocenos</h3>
+										<p>
+											En las artes marciales se busca superarse a uno mismo por encima de la comparación con la otra persona.
+										</p>
+										<a href="{{ url_for('lab')}}" class="boton boton-blanco">Ver más</a>
+									</div>
+								</div>
+							</div>
+							<div class="columna columna-33 columna-mobile-100">
+										<div class="bloque-servicio ">
+									<div class="bloque-img-servcio cuadrado-perfecto">
+										<img src="/static/img/foto4.jpg">
+									</div>
+									<div class="bloque-contenido-servicio">
+										<h3>Horarios</h3>
+										<p>
+											TAE: Que hace referencia a la utilización de los pies KWON: Vinculado a los brazos y puños DO: Noción filosófica que se asocia al camino de la perfección
+										</p>
+										<a href="{{ url_for('ocupa')}}" class="boton boton-blanco">Ver más</a>
+									</div>
+								</div>
+							</div>
+							<div class="columna columna-33 columna-mobile-100">
+										<div class="bloque-servicio">
+									<div class="bloque-img-servcio cuadrado-perfecto">
+										<img src="/static/img/foto3.jpg">
+									</div>
+									<div class="bloque-contenido-servicio">
+										<h3>TAE-KWON-DO</h3>
+										<p>
+											Arte Marcial Coreano
+										</p>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section id="galeria">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto4.jpg">
+								</div>
+							</div>
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto5.jpg">
+									
+								</div>
+							</div>
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto6.jpg">
+									
+								</div>
+							</div>
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto7.jpg">
+									
+								</div>
+							</div>
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto8.jpg">
+									
+								</div>
+							</div>
+							<div class="columna-33 columna-mobile-50">
+								<div class="cuadrado-perfecto">
+									<img src="/static/img/foto9.jpg">
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section id="contactenos" class="seccion">
+					<iframe width="520" height="400" frameborder="0" src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=%20Quito+(Quito)&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe> 
+					<div class="container">
+						<div class="row">
+							 <div class="columna columna-41 columna-mobile-100 empujar-58 empujar-mobile-0 sinpadding-mobile">
+							 	<form action="/envia_mail" method="POST">
+							 		<div class="from-block">
+							 			<input type="text" name="nombre" class="from-control" placeholder="Nombre">
+							 			
+							 		</div>
+							 		<div class="from-block">
+							 			<input type="email" name="email" class="from-control" placeholder="Email">
+							 		</div>
+							 		<div class="from-block">
+										<textarea name="mensaje" placeholder="Mensaje"></textarea>
+									</div>
+							 		<div class="from-block bloque-ultimo">
+							 			<input type="submit" class="boton boton-negro" value="Enviar">
+							 		</div>
+							 	</form>
+							 </div>
+						</div>
+					</div>
+					
+				</section>
+			</main>
+			
+
+{% endblock %}
