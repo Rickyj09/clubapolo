@@ -5,10 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from aplicacion import config
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
-from aplicacion.forms import LoginForm, UploadForm, fechas, hepaticas, alumno,campeonato, pemo,buscapac,pcopro,pcultivo\
-    ,phto,pespecial,pasto,pgrupo,pAGLUTI,pGram_GF,pvdrl,pTOXI
-from flask_wtf.file import FileField, FileRequired
-from wtforms.fields.html5 import DateField
+from aplicacion.forms import LoginForm, UploadForm, fechas, hepaticas, alumno,campeonato
 from jinja2 import Environment, FileSystemLoader
 from os import listdir
 from flask_login import LoginManager, login_user, logout_user, login_required,\
