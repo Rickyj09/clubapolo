@@ -1,0 +1,105 @@
+{% extends 'layout.html' %}
+{%block title%} PRUEBAS HEPATICAS {%endblock%}
+{% block content %}
+
+
+<body>
+  <hr>
+  
+  <form class="row g-3 needs-validation" novalidate method="POST">
+    <hr>
+    <h3>AGLUTI</h3>
+    <table class="table table-bordered">
+      <tr>
+        <th>PRUEBA</th>
+        <th>RESULTADO</th>
+        <th>VALOR REFERENCIA</th>
+
+      </tr>
+
+
+      <tr>
+        <td>TIFICO O</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.TIFICO_O.label }} {{ form.TIFICO_O(class_="form-control") }}
+            {% for error in form.TIFICO_O.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>
+          NEGATIVO
+        </td>
+      </tr>
+      <tr>
+        <td>TIFICO H</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.TIFICO_H.label }} {{ form.TIFICO_H(class_="form-control") }}
+            {% for error in form.TIFICO_H.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>NEGATIVO</td>
+      </tr>
+      <tr>
+        <td>PARATIFICA A</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.PARATIFICA_A.label }} {{ form.PARATIFICA_A(class_="form-control") }}
+            {% for error in form.PARATIFICA_A.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>NEGATIVO</td>
+      </tr>
+      <tr>
+        <td>PARATIFICO B</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.PARATIFICO_B.label }} {{ form.PARATIFICO_B(class_="form-control") }}
+            {% for error in form.PARATIFICO_B.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>NEGATIVO</td>
+      </tr>
+      <tr>
+        <td>PROTEUS OX19</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.PROTEUS_OX19.label }} {{ form.PROTEUS_OX19(class_="form-control") }}
+            {% for error in form.PROTEUS_OX19.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>NEGATIVO</td>
+      </tr>
+      <tr>
+        <td>BRUCELLA ABORTUS</td>
+        <td>
+          <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+            {{ form.BRUCELLA_ABORTUS.label }} {{ form.BRUCELLA_ABORTUS(class_="form-control") }}
+            {% for error in form.BRUCELLA_ABORTUS.errors %}
+            <span style="color: red;"> {{ error }} </span>
+            {% endfor %}
+          </div>
+        </td>
+        <td>NEGATIVO</td>
+      </tr>
+      
+    </table>
+    <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+      {{ form.hidden_tag() }}
+      {{ form.submit(class_="btn btn-primary") }}
+    </div>
+  </form>
+</body>
+
+</html>
+{% endblock %}

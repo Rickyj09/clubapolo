@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{%block title%}PACIENTE{%endblock%}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css')}}" />
+</head>
+
+<body background="/static/img/fondo1.jpg">
+  <ul class="nav justify-content-end">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('inicio')}}">INICIO </a>
+    </li>
+    <li class="nav-item">
+      {% if current_user.is_authenticated %}
+      <a class="nav-link" href="/logout"> {{ current_user.username}} (Salir)</a>
+    </li>
+    <li class="nav-item">
+      {% else %}
+      <a class="nav-link" href="/login">Login</a>
+      <a class="nav-link" href="/registro">Registro</a>
+      {% endif %}
+    </li>
+  </ul>
+  <div class="container">
+    <div class="row">
+      <div class="form-group col-xs-12 col-sm-12 col-md-12  position-relative">
+        <img src="/static/img/logo0.png">
+        <table class="table table-bordered">
+          <tr>
+            <th>N IDENTIFICACION</th>
+            <th>NOMBRES</th>
+            <th>APELLIDO</th>
+            <th>EXAMEN</th>
+            <th>FECHA</th>
+
+            <th>OTRO EXAMEN</th>
+          </tr>
+          {% for cat in data %}
+
+          <tr>
+            <td>{{cat.0}}</td>
+            <td>{{cat.1}}</td>
+            <td>{{cat.2}}</td>
+            <td>{{cat.3}}</td>
+            <td>{{cat.4}}</td>
+
+            <td>
+              <a href="pruebas_lab" class="btn btn-secondary">Examenes</a>
+            </td>
+            <td>
+              <a class="list-group-item active" href="{{url_for('pruebas_lab')}}">{{cat.3}}</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
+          <a href="{{ url_for('bus_pac') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
+
+          <a href="{{ url_for('home_pac') }}" class="btn btn-dark btn-sm rounded-0">Pacientes</a>
+          
+        </div>
+</body>
+
+</html>
