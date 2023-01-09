@@ -5,7 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 from aplicacion import config
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
-from aplicacion.forms import LoginForm, UploadForm, fechas, hepaticas, alumno,campeonato
+from flask_wtf import FlaskForm
+from aplicacion.forms import LoginForm, UploadForm, fechas, hepaticas, alumno,campeonato,buscapac,campeonato_combate\
+    ,campeonato_pommse
+from wtforms import SubmitField
+from flask_wtf.file import FileField, FileRequired
 from jinja2 import Environment, FileSystemLoader
 from os import listdir
 from flask_login import LoginManager, login_user, logout_user, login_required,\
@@ -156,655 +160,6 @@ def resumen():
     return render_template('resumen.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
 
 
-
-@app.route('/emo', methods=["get", "post"])
-@login_required
-def emo():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pemo()
-    if form.validate_on_submit():
-        COLOR = request.form['COLOR']
-        ASPECTO = request.form['ASPECTO']
-        pH = request.form['pH']
-        DENSIDAD = request.form['DENSIDAD']
-        REACCION = request.form['REACCION']
-        NITRITOS = request.form['NITRITOS']
-        LEUCOCITOS = request.form['LEUCOCITOS']
-        GLUCOSA = request.form['GLUCOSA']
-        PROTEINAS = request.form['PROTEINAS']
-        UROBILINOGENO = request.form['UROBILINOGENO']
-        SANGRE = request.form['SANGRE']
-        HEMOGLOBINA = request.form['HEMOGLOBINA']
-        BILIRRUBINAS = request.form['BILIRRUBINAS']
-        CUERPOSCETONICOS = request.form['CUERPOSCETONICOS']
-        CELULASEPITELIALESBAJAS = request.form['CELULASEPITELIALESBAJAS']
-        CELULASREDONDAS = request.form['CELULASREDONDAS']
-        PIOCITOS = request.form['PIOCITOS']
-        HEMATIES = request.form['HEMATIES']
-        BACTERIAS = request.form['BACTERIAS']
-        CILINDROSGRANULOSOS = request.form['CILINDROSGRANULOSOS']
-        LEVADURAS = request.form['LEVADURAS']
-        HIFASHONGOS = request.form['HIFASHONGOS']
-        CRISTALESACIDOURICO = request.form['CRISTALESACIDOURICO']
-        CRISTALESOXALATOCALCIO = request.form['CRISTALESOXALATOCALCIO']
-        FILAMENTOMUCOSO = request.form['FILAMENTOMUCOSO']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,COLOR,ASPECTO,pH,DENSIDAD,REACCION,NITRITOS,LEUCOCITOS,GLUCOSA,PROTEINAS,UROBILINOGENO,SANGRE,HEMOGLOBINA,BILIRRUBINAS,CUERPOS_CETONICOS,CELULAS_EPITELIALES_BAJAS,CELULAS_REDONDAS,PIOCITOS,HEMATIES,BACTERIAS,CILINDROS_GRANULOSOS,LEVADURAS,HIFAS_HONGOS,CRISTALES_ACIDO_URICO,CRISTALES_OXALATO_CALCIO,FILAMENTO_MUCOSO,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       ('emo',COLOR, ASPECTO, pH, DENSIDAD, REACCION,NITRITOS, LEUCOCITOS, GLUCOSA, PROTEINAS,UROBILINOGENO, SANGRE,HEMOGLOBINA,BILIRRUBINAS,CUERPOSCETONICOS,CELULASEPITELIALESBAJAS,CELULASREDONDAS,PIOCITOS,HEMATIES,BACTERIAS,CILINDROSGRANULOSOS,LEVADURAS,HIFASHONGOS,CRISTALESACIDOURICO,CRISTALESOXALATOCALCIO,FILAMENTOMUCOSO,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'emo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_emo'))
-    return render_template('emo.html', form=form)
-
-
-@app.route('/res_emo')
-@login_required
-def res_emo():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_emo.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/copro', methods=["get", "post"])
-@login_required
-def copro():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pcopro()
-    if form.validate_on_submit():
-        COLOR = request.form['COLOR']
-        CONSISTENCIA = request.form['CONSISTENCIA']
-        ASPECTO = request.form['ASPECTO']
-        SANGRE = request.form['SANGRE']
-        MOCO = request.form['MOCO']
-        RESTOS_ALIMENTICIOS = request.form['RESTOS_ALIMENTICIOS']
-        RESTOS_VEGETALES = request.form['RESTOS_VEGETALES']
-        ALMIDONES = request.form['ALMIDONES']
-        GRASAS = request.form['GRASAS']
-        LEVADURAS = request.form['LEVADURAS']
-        HIFAS_HONGOS = request.form['HIFAS_HONGOS']
-        LEUCOCITOS = request.form['LEUCOCITOS']
-        HEMATIES = request.form['HEMATIES']
-        FLORA_BACTERIANA = request.form['FLORA_BACTERIANA']
-        QUISTES_AMEBA_COLI = request.form['QUISTES_AMEBA_COLI']
-        QUISTES_AMEBA_HISTOLITICA = request.form['QUISTES_AMEBA_HISTOLITICA']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,COLOR,CONSISTENCIA,ASPECTO,SANGRE,MOCO,RESTOS_ALIMENTICIOS,RESTOS_VEGETALES,ALMIDONES,GRASAS,LEVADURAS,HIFAS_HONGOS,LEUCOCITOS,HEMATIES,FLORA_BACTERIANA,QUISTES_AMEBA_COLI,QUISTES_AMEBA_HISTOLITICA,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       ('copro',COLOR,CONSISTENCIA,ASPECTO,SANGRE,MOCO,RESTOS_ALIMENTICIOS,RESTOS_VEGETALES,ALMIDONES,GRASAS,LEVADURAS,HIFAS_HONGOS,LEUCOCITOS,HEMATIES,FLORA_BACTERIANA,QUISTES_AMEBA_COLI,QUISTES_AMEBA_HISTOLITICA,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'copro',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_copro'))
-    return render_template('copro.html', form=form)
-
-
-@app.route('/res_copro')
-@login_required
-def res_copro():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_copro.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/cultivo', methods=["get", "post"])
-@login_required
-def cultivo():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pcultivo()
-    if form.validate_on_submit():
-        GERMEN_AISLADO = request.form['GERMEN_AISLADO']
-        CONTAJE = request.form['CONTAJE']
-        ACIDO_NALIDIXICO = request.form['ACIDO_NALIDIXICO']
-        AMOXICILINA_AC_CLAVULANICO = request.form['AMOXICILINA_AC_CLAVULANICO']
-        CEFOTAXIMA = request.form['CEFOTAXIMA']
-        CEFUROXIME = request.form['CEFUROXIME']
-        CIPROFLOXACINA = request.form['CIPROFLOXACINA']
-        COTRIMOXAZOL = request.form['COTRIMOXAZOL']
-        FOSFOMICINA = request.form['FOSFOMICINA']
-        AMIKACINA = request.form['AMIKACINA']
-        AMPICILINA = request.form['AMPICILINA']
-        GENTAMICINA = request.form['GENTAMICINA']
-        NITROFURANTOINA = request.form['NITROFURANTOINA']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,GERMEN_AISLADO,CONTAJE,ACIDO_NALIDIXICO,AMOXICILINA_AC_CLAVULANICO,CEFOTAXIMA,CEFUROXIME,CIPROFLOXACINA,COTRIMOXAZOL,FOSFOMICINA,AMIKACINA,AMPICILINA,GENTAMICINA,NITROFURANTOINA,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       ('cultivo',GERMEN_AISLADO,CONTAJE,ACIDO_NALIDIXICO,AMOXICILINA_AC_CLAVULANICO,CEFOTAXIMA,CEFUROXIME,CIPROFLOXACINA,COTRIMOXAZOL,FOSFOMICINA,AMIKACINA,AMPICILINA,GENTAMICINA,NITROFURANTOINA,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'cultivo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_cultivo'))
-    return render_template('cultivo.html', form=form)
-
-
-@app.route('/res_cultivo')
-@login_required
-def res_cultivo():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_cultivo.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/hto', methods=["get", "post"])
-@login_required
-def hto():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = phto()
-    if form.validate_on_submit():
-        HEMATOCRITO = request.form['HEMATOCRITO']
-        HEMOGLOBINA = request.form['HEMOGLOBINA']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,HEMATOCRITO,HEMOGLOBINA,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',
-                       ('HTO',HEMATOCRITO,HEMOGLOBINA,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'hto',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_hto'))
-    return render_template('hto.html', form=form)
-
-
-@app.route('/res_hto')
-@login_required
-def res_hto():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_hto.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/especial', methods=["get", "post"])
-@login_required
-def especial():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pespecial()
-    if form.validate_on_submit():
-        RESULTADO = request.form['RESULTADO']
-        METODO = request.form['METODO']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,RESULTADO,METODO,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',
-                       ('especial',RESULTADO,METODO,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'especial',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_especial'))
-    return render_template('especial.html', form=form)
-
-
-@app.route('/res_especial')
-@login_required
-def res_especial():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_especial.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/asto', methods=["get", "post"])
-@login_required
-def asto():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pasto()
-    if form.validate_on_submit():
-        ASTO = request.form['ASTO']
-        PCR = request.form['PCR']
-        LATEX = request.form['LATEX']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,ASTO,PCR,LATEX,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s,%s)',
-                       ('asto',ASTO,PCR,LATEX,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'asto',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_asto'))
-    return render_template('asto.html', form=form)
-
-
-@app.route('/res_asto')
-@login_required
-def res_asto():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_asto.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/grupo', methods=["get", "post"])
-@login_required
-def grupo():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pgrupo()
-    if form.validate_on_submit():
-        GRUPO = request.form['GRUPO']
-        FACTOR_Rh = request.form['FACTOR_Rh']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,GRUPO,FACTOR_Rh,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',
-                       ('grupo',GRUPO,FACTOR_Rh,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'grupo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_grupo'))
-    return render_template('grupo.html', form=form)
-
-
-@app.route('/res_grupo')
-@login_required
-def res_grupo():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_grupo.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-
-@app.route('/AGLUTI', methods=["get", "post"])
-@login_required
-def AGLUTI():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pAGLUTI()
-    if form.validate_on_submit():
-        TIFICO_O = request.form['TIFICO_O']
-        TIFICO_H = request.form['TIFICO_H']
-        PARATIFICA_A = request.form['PARATIFICA_A']
-        PARATIFICO_B = request.form['PARATIFICO_B']
-        PROTEUS_OX19 = request.form['PROTEUS_OX19']
-        BRUCELLA_ABORTUS = request.form['BRUCELLA_ABORTUS']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,TIFICO_O,TIFICO_H,PARATIFICA_A,PARATIFICO_B,PROTEUS_OX19,BRUCELLA_ABORTUS,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       ('AGLUTI',TIFICO_O,TIFICO_H,PARATIFICA_A,PARATIFICO_B,PROTEUS_OX19,BRUCELLA_ABORTUS,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'grupo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_AGLUTI'))
-    return render_template('AGLUTI.html', form=form)
-
-
-@app.route('/res_AGLUTI')
-@login_required
-def res_AGLUTI():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_AGLUTI.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/Gram_GF', methods=["get", "post"])
-@login_required
-def Gram_GF():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pGram_GF()
-    if form.validate_on_submit():
-        RESULTADO = request.form['RESULTADO']
-        Cocos_Gram_Positivos = request.form['Cocos_Gram_Positivos']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,RESULTADO,Cocos_Gram_Positivos,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',
-                       ('Gram_GF',RESULTADO,Cocos_Gram_Positivos,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'grupo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_Gram_GF'))
-    return render_template('Gram_GF.html', form=form)
-
-
-@app.route('/res_Gram_GF')
-@login_required
-def res_Gram_GF():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_Gram_GF.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/vdrl', methods=["get", "post"])
-@login_required
-def vdrl():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pvdrl()
-    if form.validate_on_submit():
-        HIV_1_2 = request.form['HIV_1_2']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,HIV_1_2,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s)',
-                       ('vdrl',HIV_1_2,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'grupo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_vdrl'))
-    return render_template('vdrl.html', form=form)
-
-
-@app.route('/res_vdrl')
-@login_required
-def res_vdrl():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_vdrl.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-@app.route('/TOXI', methods=["get", "post"])
-@login_required
-def TOXI():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = pTOXI()
-    if form.validate_on_submit():
-        MARIHUANA = request.form['MARIHUANA']
-        COCAINA = request.form['COCAINA']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,MARIHUANA,COCAINA,id_paci,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',
-                       ('TOXI',MARIHUANA,COCAINA,datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'grupo',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('res_TOXI'))
-    return render_template('TOXI.html', form=form)
-
-
-@app.route('/res_TOXI')
-@login_required
-def res_TOXI():
-    datos = request.cookies.get('cookie_pac')
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "select apellido1,nombres from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    nom_pac = cursor.fetchone()
-    cursor.execute(
-        "select medico from paciente a inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    med = cursor.fetchone()
-    cursor.execute(
-        "SELECT (TIMESTAMPDIFF(YEAR,fec_nac,CURDATE())) AS edad FROM paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    edad = cursor.fetchone()
-    cursor.execute("select CURDATE();")
-    fec_hoy = cursor.fetchone()
-    cursor.execute(
-        "select iden from paciente a  inner join pruebas b on  a.iden = b.id_paci where iden = %s;" , [datos])
-    ci = cursor.fetchone()
-    cursor.execute(
-        "select * from pruebas where id = (select MAX(id) from pruebas);")
-    datos = cursor.fetchall()
-    print(datos)
-    cursor.close()
-
-    return render_template('res_TOXI.html', nom_pac=nom_pac, med=med, edad=edad, fec_hoy=fec_hoy, ci=ci, datos=datos)
-
-
-
 @login_manager.user_loader
 def load_user(user_id):
     from aplicacion.models import Usuarios
@@ -891,22 +246,15 @@ def home_campeonato():
 
     return render_template('home_campeonato.html')
 
-@app.route('/pacientes', methods=['GET', 'POST'])
+@app.route('/cate_peso', methods=['GET', 'POST'])
 @login_required
-def pacientes():
-    cursor = mysql.connection.cursor()
-    cursor.execute("select * from paciente LIMIT 10;")
-    paci = cursor.fetchall()
-    print(paci)
-    form = bus_pac()
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    if form.validate_on_submit():
-        iden = request.form['iden']
-        return  render_template("listar_paci.html", paci=paci,iden=iden)
-   #iden = request.form['id']
-    #print(iden)     
-    return render_template("pacientes.html", form=form, paci=paci)
+def cate_peso():
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT a.nombre,b.nombre,a.genero,a.rango,b.rango FROM cat_peso a inner JOIN cat_edad b on a.id_edad = b.id ')
+    data = cur.fetchall()
+    cur.close()
+
+    return render_template('cate_peso.html', data=data)
 
 
 @app.route('/listar_paci/<id>', methods=['POST', 'GET'])
@@ -946,15 +294,52 @@ def alumno_new():
         status = request.form['status']
         foto = request.form['foto']
         email = request.form['email']
+        cinturon = request.form['cinturon']
+        horario = request.form['horario']
+        peso = request.form['peso']
+        estatura = request.form['estatura']
+        flexibilidad = request.form['flexibilidad']
         cursor = mysql.connection.cursor()
         cursor.execute('insert into alumno (apellido_p,apellido_m,identificacion,tipo_iden,nombres,est_civil,fecha_nacimiento,fecha_ingreso,genero, ocupacion, status, foto, tipo_sangre, nivel_educacion,direccion,telefono1,telefono2,mail) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                        (apellido1, apellido2, iden, tipo_iden, nombres, est_civil, fec_nac,fec_ingreso, sexo,ocupacion, status,foto,tipo_s,Nivel_edu,direccion, telefono1, telefono2, email))
         mysql.connection.commit()
-        flash('Alumno guardado correctamente')
+        cursor.execute('select CURDATE()')
+        fecha = cursor.fetchone()
+        cursor.execute('insert into cinturon (id_alumno,color,fecha) VALUES (%s,%s,%s)',(iden, cinturon, fecha))
+        cursor.execute('insert into horario (id_alumno,valor_horario,fecha) VALUES (%s,%s,%s)',(iden, horario, fecha))
+        cursor.execute('insert into peso (id_alumno,valor_peso,fecha) VALUES (%s,%s,%s)',(iden, peso, fecha))
+        cursor.execute('insert into estatura (id_alumno,valor_estatura,fecha) VALUES (%s,%s,%s)',(iden, estatura, fecha))
+        cursor.execute('insert into flexibilidad (id_alumno,valor_flexibilidad,fecha) VALUES (%s,%s,%s)',(iden, flexibilidad, fecha))
+        mysql.connection.commit()
         return render_template("home.html", form=form)
     return render_template("alumno_new.html", form=form)
 
-
+@app.route('/busc_alumno', methods = ['POST', 'GET'])
+@login_required
+def busc_alumno():
+    form = buscapac()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        print(iden)
+        cursor = mysql.connection.cursor()
+        cursor.execute("""select a.identificacion,a.nombres,a.apellido_p,a.apellido_m,b.color,c.valor_peso,d.valor_estatura from alumno a 
+                            inner join cinturon b on b.id_alumno = a.identificacion 
+                            inner join peso c on c.id_alumno = a.identificacion 
+                            inner join estatura d on d.id_alumno = a.identificacion 
+                            WHERE identificacion = %s 
+                            and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
+                            and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
+                            and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
+        data = cursor.fetchall()
+        cursor.execute("""select id_alumno,nombre,fecha,ubicacion,num_participantes from camp_combate a 
+                            WHERE id_alumno = %s""",[iden])
+        data1 = cursor.fetchall()
+        cursor.execute("""select id_alumno,nombre,fecha,ubicacion,num_participantes from camp_pommse  
+                            WHERE id_alumno = %s""",[iden])
+        data2 = cursor.fetchall()
+        #print(data[0])
+        return render_template('listar-alumno.html', data=data,data1=data1,data2=data2)
+    return render_template("bus_alumno.html", form=form)
 
 @app.route('/campeonato_new', methods=["get", "post"])
 @login_required
@@ -975,6 +360,86 @@ def campeonato_new():
     return render_template("campeonato_new.html", form=form)
 
 
+@app.route('/campeonato_combate_new', methods=["get", "post"])
+@login_required
+def campeonato_combate_new():
+    form = campeonato_combate()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        ubicacion = request.form['ubicacion']
+        nombre = request.form['nombre']
+        puntua = request.form['puntua']
+        fecha = request.form['fecha']
+        cinturon = request.form['cinturon']
+        edad = request.form['edad']
+        peso = request.form['peso']
+        num_part = request.form['num_part']
+        obs = request.form['obs']
+        cursor = mysql.connection.cursor()
+        cursor.execute('insert into camp_combate (id_alumno,nombre,puntua,fecha,ubicacion,cat_cinturon,cat_edad,cat_peso,num_participantes,obs) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                       (iden, nombre,puntua,fecha,ubicacion,cinturon,edad,peso,num_part,obs,))
+        mysql.connection.commit()
+        flash('Campeonato guardado correctamente')
+        return render_template("home.html", form=form)
+    return render_template("campeonato_combate_new.html", form=form)
+
+
+@app.route('/campeonato_pommse_new', methods=["get", "post"])
+@login_required
+def campeonato_pommse_new():
+    form = campeonato_pommse()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        ubicacion = request.form['ubicacion']
+        nombre = request.form['nombre']
+        puntua = request.form['puntua']
+        fecha = request.form['fecha']
+        cinturon = request.form['cinturon']
+        edad = request.form['edad']
+        num_part = request.form['num_part']
+        obs = request.form['obs']
+        cursor = mysql.connection.cursor()
+        cursor.execute('insert into camp_pommse (id_alumno,nombre,puntua,fecha,ubicacion,cat_cinturon,cat_edad,num_participantes,obs) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                       (iden, nombre,puntua,fecha,ubicacion,cinturon,edad,num_part,obs,))
+        mysql.connection.commit()
+        flash('Campeonato guardado correctamente')
+        return render_template("home.html", form=form)
+    return render_template("campeonato_pommse_new.html", form=form)
+
+@app.route('/busc_campeonato', methods = ['POST', 'GET'])
+@login_required
+def busc_campeonato():
+    form = buscapac()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        print(iden)
+        cursor = mysql.connection.cursor()
+        cursor.execute("""select a.identificacion,a.nombres,a.apellido_p,a.apellido_m,b.color,c.valor_peso,d.valor_estatura from alumno a 
+                            inner join cinturon b on b.id_alumno = a.identificacion 
+                            inner join peso c on c.id_alumno = a.identificacion 
+                            inner join estatura d on d.id_alumno = a.identificacion 
+                            WHERE identificacion = %s 
+                            and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
+                            and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
+                            and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
+        data = cursor.fetchall()
+        cursor.execute("""select b.id_alumno,a.nombre,a.fecha,b.ubicacion,b.num_participantes from campeonato a 
+                            inner join camp_combate b
+                            on a.id = b.id
+                            WHERE b.id_alumno = %s""",[iden])
+        data1 = cursor.fetchall()
+        cursor.execute("""select b.id_alumno,a.nombre,a.fecha,b.ubicacion,b.num_participantes from campeonato a 
+                            inner join camp_pommse b
+                            on a.id = b.id
+                            WHERE b.id_alumno = %s""",[iden])
+        data2 = cursor.fetchall()
+        #print(data[0])
+        return render_template('listar-alumno.html', data=data,data1=data1,data2=data2)
+    return render_template("busc_campeonato.html", form=form)
+
+
 @app.route('/edit_pac/<string:id>', methods = ['POST', 'GET'])
 def get_pac(id):
     cur = mysql.connection.cursor()
@@ -987,21 +452,7 @@ def get_pac(id):
     return render_template('edit_pac.html', paciente = data)
 
 
-@app.route('/bus_pac', methods = ['POST', 'GET'])
-@login_required
-def bus_pac():
-    form = buscapac()
-    if request.method == 'POST':
-        iden = request.form['iden']
-        print(iden)
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM pacientexexamen WHERE iden = %s", [iden])
-        data = cursor.fetchall()
-        #print(data[0])
-        resp = make_response(render_template('listar-paci.html', data=data))
-        resp.set_cookie('cookie_pac',str(iden))
-        return resp
-    return render_template("bus_pac.html", form=form)
+
 
 
 

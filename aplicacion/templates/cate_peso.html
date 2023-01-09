@@ -5,14 +5,15 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{%block title%}PACIENTE{%endblock%}</title>
+  <link rel="shortcut icon" href="/static/img/favicon.png">
+  <title>{%block title%}CATEGORIA PESO{%endblock%}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css')}}" />
 </head>
 
 <body background="/static/img/fondo1.jpg">
   <ul class="nav justify-content-end">
     <li class="nav-item">
-      <a class="nav-link" href="{{ url_for('inicio')}}">INICIO </a>
+      <a class="nav-link" href="{{ url_for('home')}}">INICIO </a>
     </li>
     <li class="nav-item">
       {% if current_user.is_authenticated %}
@@ -28,16 +29,17 @@
   <div class="container">
     <div class="row">
       <div class="form-group col-xs-12 col-sm-12 col-md-12  position-relative">
-        <img src="/static/img/logo0.png">
+        <img src="/static/img/logo1.png">
+        <h6>
+          CATEGORIAS DE PESO Y EDAD
+        </h6>
         <table class="table table-bordered">
           <tr>
-            <th>N IDENTIFICACION</th>
-            <th>NOMBRES</th>
-            <th>APELLIDO</th>
-            <th>EXAMEN</th>
-            <th>FECHA</th>
-
-            <th>OTRO EXAMEN</th>
+            <th>NOMBRE CATEGORIA PESO</th>
+            <th>NOMBRE CATEGORIA EDAD</th>
+            <th>GENERO</th>
+            <th>RANGO PESO Kg</th>
+            <th>RANGO EDAD años</th>
           </tr>
           {% for cat in data %}
 
@@ -48,20 +50,13 @@
             <td>{{cat.3}}</td>
             <td>{{cat.4}}</td>
 
-            <td>
-              <a href="pruebas_lab" class="btn btn-secondary">Examenes</a>
-            </td>
-            <td>
-              <a class="list-group-item active" href="{{url_for('pruebas_lab')}}">{{cat.3}}</a>
-            </td>
           </tr>
           {% endfor %}
         </table>
-        <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
-          <a href="{{ url_for('bus_pac') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
+       
 
-          <a href="{{ url_for('home_pac') }}" class="btn btn-dark btn-sm rounded-0">Pacientes</a>
-          
+        <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
+          <a href="{{ url_for('home') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
         </div>
 </body>
 

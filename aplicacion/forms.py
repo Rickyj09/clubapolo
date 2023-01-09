@@ -49,8 +49,9 @@ class FormSINO(FlaskForm):
 
 
 class buscapac(FlaskForm):
-    iden = StringField('Cédula Pasaporte', validators=[DataRequired(),Length(min=10,max=14)], render_kw={"placeholder": "Identificación"})
+    iden = IntegerField('Cédula Pasaporte', validators=[DataRequired(),Length(min=10,max=14)], render_kw={"placeholder": "Identificación"})
     submit = SubmitField('Buscar')
+
 
 
 
@@ -87,6 +88,11 @@ class alumno(FlaskForm):
     status = StringField('Status', validators=[])
     foto = StringField('Foto', validators=[])
     email = EmailField('Email')
+    cinturon = StringField('Cinturón', validators=[])
+    horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
+    peso = StringField('Peso Kg', validators=[])
+    estatura = StringField('Estatura cm', validators=[])
+    flexibilidad = StringField('Nivel de flexibilidad', validators=[])
        
     submit = SubmitField('Enviar')
 
@@ -95,6 +101,34 @@ class campeonato(FlaskForm):
     nombre = StringField('Nombre', validators=[DataRequired()])
     puntua = SelectField('Es Puntuable',choices=[('S', 'Si'), ('N', 'No'),],default = 'C',render_kw={}, id='est_civil')
     fecha = DateField('Fecha del evento', validators=[DataRequired()],render_kw={"placeholder": "Fecha del evento"})
+    obs  = StringField('Observacones',validators=[])
+       
+    submit = SubmitField('Enviar')
+
+class campeonato_combate(FlaskForm):
+    iden = IntegerField('Identificación', validators=[DataRequired()])
+    nombre = StringField('Nombre del Campeonato', validators=[DataRequired()])
+    puntua = SelectField('Es Puntuable',choices=[('S', 'Si'), ('N', 'No'),],default = 'C',render_kw={}, id='est_civil')
+    fecha = DateField('Fecha del evento', validators=[DataRequired()],render_kw={"placeholder": "Fecha del evento"})
+    ubicacion = SelectField('Medalla Obtenida',choices=[('Oro', 'Oro'), ('Plata', 'Plata'),('Bronce', 'Bronce')],default = '',render_kw={}, id='medalla')
+    cinturon = StringField('Cinturon', validators=[DataRequired()])
+    edad = StringField('Edad', validators=[DataRequired()])
+    peso = StringField('Peso', validators=[DataRequired()])
+    num_part = IntegerField('Número de participantes', validators=[DataRequired()],render_kw={"placeholder": ""})
+    obs  = StringField('Observacones',validators=[])
+       
+    submit = SubmitField('Enviar')
+
+
+class campeonato_pommse(FlaskForm):
+    iden = IntegerField('Identificación', validators=[DataRequired()])
+    nombre = StringField('Nombre del Campeonato', validators=[DataRequired()])
+    puntua = SelectField('Es Puntuable',choices=[('S', 'Si'), ('N', 'No'),],default = 'C',render_kw={}, id='est_civil')
+    fecha = DateField('Fecha del evento', validators=[DataRequired()],render_kw={"placeholder": "Fecha del evento"})
+    ubicacion = SelectField('Medalla Obtenida',choices=[('Oro', 'Oro'), ('Plata', 'Plata'),('Bronce', 'Bronce')],default = '',render_kw={}, id='medalla')
+    cinturon = StringField('Cinturon', validators=[DataRequired()])
+    edad = StringField('Edad', validators=[DataRequired()])
+    num_part = IntegerField('Número de participantes', validators=[DataRequired()],render_kw={"placeholder": ""})
     obs  = StringField('Observacones',validators=[])
        
     submit = SubmitField('Enviar')
