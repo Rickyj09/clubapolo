@@ -7,7 +7,7 @@ from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
 from aplicacion.forms import LoginForm, UploadForm, fechas, alumno,campeonato,buscapac,campeonato_combate\
-    ,campeonato_pommse
+    ,campeonato_pommse,horario_ent
 from wtforms import SubmitField
 from flask_wtf.file import FileField, FileRequired
 from jinja2 import Environment, FileSystemLoader
@@ -187,17 +187,8 @@ def reporte_foto1():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    cursor = mysql.connection.cursor()
-
     form = fechas()
     if form.validate_on_submit():
-        fec_ini = request.form['fec_ini']
-        fec_fin = request.form['fec_fin']
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            "select apellido1,nombres from paciente a  inner join hepaticas b on  a.iden = b.id_paci;")
-        datos = cursor.fetchone()
-        print(datos)
         return redirect(url_for('inicio'))
     return render_template('home.html', form=form)
 
@@ -225,6 +216,22 @@ def cate_peso():
 
     return render_template('cate_peso.html', data=data)
 
+
+@app.route('/horario_entrena', methods=['GET', 'POST'])
+@login_required
+def horario_entrena():
+    form = horario_ent()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        horario = request.form['horario']
+        cursor = mysql.connection.cursor()
+        cursor.execute('select CURDATE()')
+        fecha_log = cursor.fetchone()
+        cursor.execute('insert into horario (id_alumno,valor_horario,fecha) VALUES (%s,%s,%s)',
+                       (iden, horario, fecha_log))
+        mysql.connection.commit()
+        return render_template("home.html", form=form)
+    return render_template('horario_entrena.html', form=form)
 
 @app.route('/listar_paci/<id>', methods=['POST', 'GET'])
 @login_required

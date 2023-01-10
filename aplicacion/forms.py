@@ -150,3 +150,10 @@ class FormChangePassword(FlaskForm):
 class UploadForm(FlaskForm):
     photo = FileField('selecciona imagen:',validators=[FileRequired()])
     submit = SubmitField('Submit')
+
+
+class horario_ent(FlaskForm):
+    iden = IntegerField('Identificación', validators=[DataRequired()])
+    horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
+
+    submit = SubmitField('Submit')
