@@ -1,13 +1,14 @@
-{% extends "layout.html" %}
+{% extends "layout1.html" %}
 {% block title %}Fotos{% endblock %}
 {% block content %}
-	    <h2>Subir imágnes</h2>
+	    <h2>Subir fotos</h2>
+		<div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
 	    {% for field, errors in form.errors.items() %}
 			<div class="alert alert-danger">
     		{{ form[field].label }}: {{ ', '.join(errors) }}
 			</div>
 		{% endfor %}
-	   	<form action="{{url_for('upload')}}" method="POST" enctype="multipart/form-data">
+	   	<form action="{{url_for('upload_foto')}}" method="POST" enctype="multipart/form-data">
     		{{ form.csrf_token }}
     		{{form.photo.label() }}{{form.photo()}}<br/>
 			<br/>

@@ -6,7 +6,7 @@ from aplicacion import config
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
-from aplicacion.forms import LoginForm, UploadForm, fechas, hepaticas, alumno,campeonato,buscapac,campeonato_combate\
+from aplicacion.forms import LoginForm, UploadForm, fechas, alumno,campeonato,buscapac,campeonato_combate\
     ,campeonato_pommse
 from wtforms import SubmitField
 from flask_wtf.file import FileField, FileRequired
@@ -99,37 +99,6 @@ def historia():
 def ocupa():
     return render_template("ocupa.html")
 
-
-@app.route('/hepaticas', methods=["get", "post"])
-@login_required
-def phepaticas():
-    datos = request.cookies.get('cookie_pac',None)
-    print(datos)
-    form = hepaticas()
-    if form.validate_on_submit():
-        SGOT = request.form['SGOT']
-        SGPT = request.form['SGPT']
-        BILIRRUBIN_TOTAL = request.form['BILIRRUBIN_TOTAL']
-        BILIRRUBINA_DIRECTA = request.form['BILIRRUBINA_DIRECTA']
-        BILIRRUBINA_INDIRECTA = request.form['BILIRRUBINA_INDIRECTA']
-        SGPROTEINAS_TOTALESOT = request.form['PROTEINAS_TOTALES']
-        AMILASA = request.form['AMILASA']
-        LIPASA = request.form['LIPASA']
-        cursor = mysql.connection.cursor()
-        cursor.execute("select CURDATE();")
-        fecha_hoy = cursor.fetchone()
-        datos = request.cookies.get('cookie_pac')
-        cursor.execute("SELECT nombres FROM paciente WHERE iden = %s", [datos])
-        nombres = cursor.fetchone()
-        cursor.execute("SELECT apellido1 FROM paciente WHERE iden = %s", [datos])
-        apellido = cursor.fetchone()
-        cursor.execute('insert into pruebas (nombre_prueba,sgot,sgpt,BILIRRUBINA_TOTAL,bilirrubina_directa,bilirrubina_indirecta,proteinas_totales,amilasa,lipasa,id_paci,fecha_examen) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       ('hepaticas',SGOT, SGPT, BILIRRUBIN_TOTAL, BILIRRUBINA_DIRECTA, BILIRRUBINA_INDIRECTA, SGPROTEINAS_TOTALESOT, AMILASA, LIPASA, datos, fecha_hoy))
-        cursor.execute('insert into pacientexexamen (iden,nombre,apellido,examen,FECHA_EXAMEN) VALUES (%s,%s,%s,%s,%s)',(datos,nombres,apellido,'hepaticas',fecha_hoy))
-        mysql.connection.commit()
-        flash('Guardado Correctamente')
-        return redirect(url_for('resumen'))
-    return render_template('hepaticas.html', form=form)
 
 
 @app.route('/resumen')
@@ -292,7 +261,6 @@ def alumno_new():
         telefono1 = request.form['telefono1']
         telefono2 = request.form['telefono2']
         status = request.form['status']
-        foto = request.form['foto']
         email = request.form['email']
         cinturon = request.form['cinturon']
         horario = request.form['horario']
@@ -300,8 +268,10 @@ def alumno_new():
         estatura = request.form['estatura']
         flexibilidad = request.form['flexibilidad']
         cursor = mysql.connection.cursor()
-        cursor.execute('insert into alumno (apellido_p,apellido_m,identificacion,tipo_iden,nombres,est_civil,fecha_nacimiento,fecha_ingreso,genero, ocupacion, status, foto, tipo_sangre, nivel_educacion,direccion,telefono1,telefono2,mail) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       (apellido1, apellido2, iden, tipo_iden, nombres, est_civil, fec_nac,fec_ingreso, sexo,ocupacion, status,foto,tipo_s,Nivel_edu,direccion, telefono1, telefono2, email))
+        cursor.execute('select CURDATE()')
+        fecha_log = cursor.fetchone()
+        cursor.execute('insert into alumno (apellido_p,apellido_m,identificacion,tipo_iden,nombres,est_civil,fecha_nacimiento,fecha_ingreso,genero, ocupacion, status, tipo_sangre, nivel_educacion,direccion,telefono1,telefono2,mail,fecha_log) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                       (apellido1, apellido2, iden, tipo_iden, nombres, est_civil, fec_nac,fec_ingreso, sexo,ocupacion, status,tipo_s,Nivel_edu,direccion, telefono1, telefono2, email,fecha_log))
         mysql.connection.commit()
         cursor.execute('select CURDATE()')
         fecha = cursor.fetchone()
@@ -311,7 +281,7 @@ def alumno_new():
         cursor.execute('insert into estatura (id_alumno,valor_estatura,fecha) VALUES (%s,%s,%s)',(iden, estatura, fecha))
         cursor.execute('insert into flexibilidad (id_alumno,valor_flexibilidad,fecha) VALUES (%s,%s,%s)',(iden, flexibilidad, fecha))
         mysql.connection.commit()
-        return render_template("home.html", form=form)
+        return render_template("inicio_foto.html", form=form)
     return render_template("alumno_new.html", form=form)
 
 @app.route('/busc_alumno', methods = ['POST', 'GET'])
@@ -359,6 +329,31 @@ def campeonato_new():
         return render_template("home.html", form=form)
     return render_template("campeonato_new.html", form=form)
 
+
+@app.route('/alumno_foto')
+@login_required
+def alumno_foto():
+    lista = []
+    for file in listdir(app.root_path+"/static/img/fotos/"):
+        lista.append(file)
+    return render_template("home.html", lista=lista)
+
+
+@app.route('/upload_foto', methods=['get', 'post'])
+def upload_foto():
+    form = UploadForm()  # carga request.from y request.file
+    if form.validate_on_submit():
+        f = form.photo.data
+        filename = secure_filename(f.filename)
+        f.save(app.root_path+"/static/fotos/"+filename)
+        foto = app.root_path+"/static/fotos/"+filename
+        cursor = mysql.connection.cursor()
+        cursor.execute('select identificacion from alumno where fecha_log = (select max(fecha_log) from alumno);')
+        ident = cursor.fetchone()
+        cursor.execute('insert into alumno_foto (iden,foto) VALUES (%s,%s)',(ident,foto))
+        mysql.connection.commit()
+        return redirect(url_for('home'))
+    return render_template('upload_foto.html', form=form)
 
 @app.route('/campeonato_combate_new', methods=["get", "post"])
 @login_required
@@ -535,7 +530,7 @@ def login():
         if user is not None and user.verify_password(form.password.data):
             login_user(user)
             next = request.args.get('next')
-            return redirect(next or url_for('home_alumn'))
+            return redirect(next or url_for('home'))
         form.username.errors.append("Usuario o contraseña incorrectas.")
     return render_template('login.html', form=form)
 
