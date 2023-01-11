@@ -314,8 +314,10 @@ def busc_alumno():
         cursor.execute("""select id_alumno,nombre,fecha,ubicacion,num_participantes from camp_pommse  
                             WHERE id_alumno = %s""",[iden])
         data2 = cursor.fetchall()
-        #print(data[0])
-        return render_template('listar-alumno.html', data=data,data1=data1,data2=data2)
+        cursor.execute("""select foto from alumno_foto WHERE iden = %s""",[iden])
+        data3 = cursor.fetchone()
+        print(data3)
+        return render_template('listar-alumno.html', data=data,data1=data1,data2=data2,data3=data3)
     return render_template("bus_alumno.html", form=form)
 
 @app.route('/campeonato_new', methods=["get", "post"])
@@ -353,7 +355,7 @@ def upload_foto():
         f = form.photo.data
         filename = secure_filename(f.filename)
         f.save(app.root_path+"/static/fotos/"+filename)
-        foto = app.root_path+"/static/fotos/"+filename
+        foto = filename
         cursor = mysql.connection.cursor()
         cursor.execute('select identificacion from alumno where fecha_log = (select max(fecha_log) from alumno);')
         ident = cursor.fetchone()

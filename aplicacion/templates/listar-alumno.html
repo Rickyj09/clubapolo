@@ -33,6 +33,18 @@
         <h6>
           DATOS GENERALES ALUMNO
         </h6>
+
+          {% for cat in data3 %}
+
+          <tr>
+            {% if cat.1 %}
+		   		    <td><img width="100" src="{{url_for('static',filename='fotos/')}}{{cat}}"/>
+		   	    {% else %}
+		   		    <td><img src="{{url_for('static',filename='fotos/not-found.png')}}"/>
+		   	    {% endif %}
+          </tr>
+          {% endfor %}
+
         <table class="table table-bordered">
           <tr>
             <th>Nº IDENTIFICACION</th>
@@ -102,6 +114,10 @@
           </tr>
           {% endfor %}
         </table>
+
+
+        
+
 
         <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
           <a href="{{ url_for('busc_alumno') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
