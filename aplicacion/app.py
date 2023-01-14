@@ -320,6 +320,39 @@ def busc_alumno():
         return render_template('listar-alumno.html', data=data,data1=data1,data2=data2,data3=data3)
     return render_template("bus_alumno.html", form=form)
 
+
+@app.route('/busc_alumno1', methods = ['POST', 'GET'])
+@login_required
+def busc_alumno1():
+    form = buscapac()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        print(iden)
+        cursor = mysql.connection.cursor()
+        cursor.execute("""select a.identificacion,a.nombres,a.apellido_p,a.apellido_m,b.color,c.valor_peso,d.valor_estatura from alumno a 
+                            inner join cinturon b on b.id_alumno = a.identificacion 
+                            inner join peso c on c.id_alumno = a.identificacion 
+                            inner join estatura d on d.id_alumno = a.identificacion 
+                            WHERE identificacion = %s 
+                            and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
+                            and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
+                            and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
+        data = cursor.fetchall()
+        cursor.execute("""select id_alumno,valor_estatura,fecha from estatura a 
+                            WHERE id_alumno = %s""",[iden])
+        data1 = cursor.fetchall()
+        cursor.execute("""select id_alumno,valor_peso,fecha from peso  
+                            WHERE id_alumno = %s""",[iden])
+        data2 = cursor.fetchall()
+        cursor.execute("""select id_alumno,valor_flexibilidad from flexibilidad  
+                            WHERE id_alumno = %s""",[iden])
+        data4 = cursor.fetchall()
+        cursor.execute("""select foto from alumno_foto WHERE iden = %s""",[iden])
+        data3 = cursor.fetchone()
+        print(data3)
+        return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3)
+    return render_template("bus_alumno.html", form=form)
+
 @app.route('/campeonato_new', methods=["get", "post"])
 @login_required
 def campeonato_new():
