@@ -21,8 +21,8 @@
 
   <div class="container">
     <div class="row">
-      <div class="form-group col-xs-12 col-sm-12 col-md-6  position-relative">
-        <div class="card" style="width: 23rem;">
+      <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+        <div class="card" style="width: 18rem;">
           <img src="/static/img/foto18.jpg" class="card-img-top" alt="...">
           <div class="card-body" style="background-color: #a1becc">
             <h3>NUEVO</h3>
@@ -34,8 +34,8 @@
         </div>
       </div>
 
-      <div class="form-group col-xs-12 col-sm-12 col-md-6  position-relative">
-        <div class="card" style="width: 23rem;">
+      <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+        <div class="card" style="width: 18rem;">
           <img src="/static/img/foto3.jpg" class="card-img-top" alt="...">
           <section id="pacientes">
             <div class="card-body" style="background-color: #a1becc">
@@ -46,10 +46,23 @@
               <a href="{{ url_for('busc_alumno1')}}" class="btn btn-primary">Historia Alumno</a>
             </div>
 
+
+           
           </section>
         </div>
       </div>
 
+      <div class="form-group col-xs-12 col-sm-12 col-md-4  position-relative">
+        <div class="card" style="width: 18rem;">
+          <img src="/static/img/foto18.jpg" class="card-img-top" alt="...">
+          <div class="card-body" style="background-color: #a1becc">
+            <h6>ACTUALIZAR DATOS</h6>
+            <a href="{{ url_for('datos_cinturon')}}" class="btn btn-primary">Ascenso Cinturon</a>
+            <a href="{{ url_for('datos_peso')}}" class="btn btn-primary">Registro Peso</a>
+            <a href="{{ url_for('datos_estatura')}}" class="btn btn-primary">Registro estatura</a>
+          </div>
+        </div>
+      </div>
 
 
     </div>

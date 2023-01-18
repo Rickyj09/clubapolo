@@ -353,6 +353,73 @@ def busc_alumno1():
         return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3)
     return render_template("bus_alumno.html", form=form)
 
+@app.route('/datos_cinturon', methods=["get", "post"])
+@login_required
+def datos_cinturon():
+    form = alumno()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        cinturon = request.form['cinturon']
+        cursor = mysql.connection.cursor()
+        cursor.execute('select CURDATE()')
+        fecha = cursor.fetchone()
+        cursor.execute('insert into cinturon (id_alumno,color,fecha) VALUES (%s,%s,%s)',(iden, cinturon, fecha))
+        mysql.connection.commit()
+        return render_template("home_alumn.html", form=form)
+    return render_template("datos_cinturon.html", form=form)
+
+
+@app.route('/datos_peso', methods=["get", "post"])
+@login_required
+def datos_peso():
+    form = alumno()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        peso = request.form['peso']
+        cursor = mysql.connection.cursor()
+        cursor.execute('select CURDATE()')
+        fecha = cursor.fetchone()
+        cursor.execute('insert into peso (id_alumno,valor_peso,fecha) VALUES (%s,%s,%s)',(iden, peso, fecha))
+        mysql.connection.commit()
+        return render_template("home_alumn.html", form=form)
+    return render_template("datos_peso.html", form=form)
+
+
+@app.route('/datos_estatura', methods=["get", "post"])
+@login_required
+def datos_estatura():
+    form = alumno()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        estatura = request.form['estatura']
+        cursor = mysql.connection.cursor()
+        cursor.execute('select CURDATE()')
+        fecha = cursor.fetchone()
+        cursor.execute('insert into estatura (id_alumno,valor_estatura,fecha) VALUES (%s,%s,%s)',(iden, estatura, fecha))
+        mysql.connection.commit()
+        return render_template("home_alumn.html", form=form)
+    return render_template("datos_estatura.html", form=form)
+
+
+@app.route('/datos_flexibilidad', methods=["get", "post"])
+@login_required
+def datos_flexibilidad():
+    form = alumno()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        flexibilidad = request.form['flexibilidad']
+        cursor = mysql.connection.cursor()
+        cursor.execute('select CURDATE()')
+        fecha = cursor.fetchone()
+        cursor.execute('insert into flexibilidad (id_alumno,valor_flexibilidad,fecha) VALUES (%s,%s,%s)',(iden, flexibilidad, fecha))
+        mysql.connection.commit()
+        return render_template("home_alumn.html", form=form)
+    return render_template("datos_flexibilidad.html", form=form)
+
 @app.route('/campeonato_new', methods=["get", "post"])
 @login_required
 def campeonato_new():

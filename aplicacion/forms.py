@@ -85,7 +85,7 @@ class alumno(FlaskForm):
     Nivel_edu = StringField('Nivel Educación', validators=[])
     telefono1 = StringField('Teléfono Domicilio', validators=[])
     telefono2 = StringField('Teléfono Movil', validators=[])
-    status = StringField('Status', validators=[])
+    status = SelectField('Status',choices=[('Activo', 'Activo'), ('Inactivo', 'Inactivo')],default = 'Activo',render_kw={}, id='status')
     email = EmailField('Email')
     cinturon = StringField('Cinturón', validators=[])
     horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
@@ -95,6 +95,15 @@ class alumno(FlaskForm):
        
     submit = SubmitField('Enviar')
 
+
+class datos_alumno(FlaskForm):
+    iden = StringField('Cédula Pasaporte', validators=[DataRequired()],render_kw={"placeholder": "Identificación"})
+    cinturon = StringField('Cinturón', validators=[])
+    peso = StringField('Peso Kg', validators=[])
+    estatura = StringField('Estatura cm', validators=[])
+    flexibilidad = StringField('Nivel de flexibilidad', validators=[])
+       
+    submit = SubmitField('Enviar')
 
 class campeonato(FlaskForm):
     nombre = StringField('Nombre', validators=[DataRequired()])
