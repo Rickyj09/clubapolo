@@ -307,7 +307,7 @@ def busc_alumno():
                             and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
                             and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
                             and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
-        data = cursor.fetchall()
+        data = cursor.fetchone()
         cursor.execute("""select id_alumno,nombre,fecha,ubicacion,num_participantes from camp_combate a 
                             WHERE id_alumno = %s""",[iden])
         data1 = cursor.fetchall()
