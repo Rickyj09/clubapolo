@@ -6,8 +6,8 @@ from aplicacion import config
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
-from aplicacion.forms import LoginForm, UploadForm, fechas, alumno,campeonato,buscapac,campeonato_combate\
-    ,campeonato_pommse,horario_ent
+from aplicacion.forms import LoginForm, UploadForm,alumno,campeonato,buscapac,campeonato_combate\
+    ,campeonato_pommse,horario_ent,fechas_buscar
 from wtforms import SubmitField
 from flask_wtf.file import FileField, FileRequired
 from jinja2 import Environment, FileSystemLoader
@@ -187,7 +187,7 @@ def reporte_foto1():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    form = fechas()
+    form = fechas_buscar()
     if form.validate_on_submit():
         return redirect(url_for('inicio'))
     return render_template('home.html', form=form)
@@ -337,7 +337,7 @@ def busc_alumno1():
                             and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
                             and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
                             and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
-        data = cursor.fetchall()
+        data = cursor.fetchone()
         cursor.execute("""select id_alumno,valor_estatura,fecha from estatura a 
                             WHERE id_alumno = %s""",[iden])
         data1 = cursor.fetchall()
@@ -351,7 +351,38 @@ def busc_alumno1():
         data3 = cursor.fetchone()
         print(data3)
         return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3)
-    return render_template("bus_alumno.html", form=form)
+    return render_template("bus_alumno1.html", form=form)
+
+
+
+@app.route('/busc_asistencia', methods = ['POST', 'GET'])
+@login_required
+def busc_asistencia():
+    form = fechas_buscar()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        mes = request.form['mes']
+        print(iden)
+        cursor = mysql.connection.cursor()
+        cursor.execute("""select a.identificacion,a.nombres,a.apellido_p,a.apellido_m,b.color,c.valor_peso,d.valor_estatura from alumno a 
+                            inner join cinturon b on b.id_alumno = a.identificacion 
+                            inner join peso c on c.id_alumno = a.identificacion 
+                            inner join estatura d on d.id_alumno = a.identificacion 
+                            WHERE identificacion = %s 
+                            and b.fecha = (select max(fecha) from cinturon where id_alumno = %s) 
+                            and c.fecha = (select max(fecha) from peso where id_alumno = %s) 
+                            and d.fecha = (select max(fecha) from estatura where id_alumno = %s)""", [iden,iden,iden,iden])
+        data = cursor.fetchone()
+        cursor.execute("""select id_alumno,valor_horario,fecha from horario a 
+                            WHERE id_alumno = %s and EXTRACT(MONTH FROM fecha) = %s""",[iden,mes])
+        data1 = cursor.fetchall()
+        cursor.execute("""select foto from alumno_foto WHERE iden = %s""",[iden])
+        data3 = cursor.fetchone()
+        print(data3)
+        return render_template('listar-asistencia.html', data=data,data1=data1,data3=data3)
+    return render_template("busc_asistencia.html", form=form)
+
+
 
 @app.route('/datos_cinturon', methods=["get", "post"])
 @login_required

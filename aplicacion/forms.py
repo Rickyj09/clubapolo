@@ -87,7 +87,7 @@ class alumno(FlaskForm):
     telefono2 = StringField('Teléfono Movil', validators=[])
     status = SelectField('Status',choices=[('Activo', 'Activo'), ('Inactivo', 'Inactivo')],default = 'Activo',render_kw={}, id='status')
     email = EmailField('Email')
-    cinturon = StringField('Cinturón', validators=[])
+    cinturon = RadioField(u'Cinturón', choices=[('Blanco', 'Blanco 10mo Kup'), ('Blanco-Amarillo', 'Blanco Puntas Amarillas 9no Kup'), ('Amarillo', 'Amarillo 8vo Kup'), ('Amarillo-Verde', 'Amarillo punta Verde 7mo Kup'), ('Verde', 'Verde 6to Kup'), ('Verde-Azul', 'Verde punta Azul 5to Kup'), ('Azul', 'Azul 4to Kup'), ('Azul-Rojo', 'Azul punta Roja 3er Kup'), ('Rojo', 'Rojo 2do Kup'), ('Rojo-Negro', 'Rojo punto Negro 1er Kup'),('1er Dan', '1er Dan'), ('2do Dan', '2do Dan'), ('3er Dan', '3er Dan'), ('4to Dan', '4to Dan'), ('5to Dan', '5to Dan'), ('6to Dan', '6to Dan'), ('7mo Dan', '7to Dan'), ('8vo Dan', '8vo Dan'), ('9no Dan', '9no Dan'), ('10mo Dan', '10mo Dan')], default='C', render_kw={}, id='conf_caratula')
     horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
     peso = StringField('Peso Kg', validators=[])
     estatura = StringField('Estatura cm', validators=[])
@@ -141,11 +141,10 @@ class campeonato_pommse(FlaskForm):
        
     submit = SubmitField('Enviar')
 
-class fechas(FlaskForm):
-    fec_ini = DateField('Fecha de Inicio', validators=[DataRequired()],render_kw={"placeholder": "Fecha Inicio"})
+class fechas_buscar(FlaskForm):
+    mes = SelectField(u'Mes', choices=[(1, 'Enero'), (2, 'Febrero'), (3, 'Marzo'), (4, 'Abril'), (5, 'Mayo'), (6, 'Junio'), (7, 'Julio'), (8, 'Agosto'), (9, 'Septiembre'), (10, 'Octubre'),(11, 'Noviembre'),(12, 'Diciembre')], default='1', render_kw={}, id='mes_buscar')
     fec_fin = DateField('Fecha de Final', validators=[DataRequired()],render_kw={"placeholder": "Fecha Final"})
     iden = StringField('Cédula Pasaporte', validators=[],render_kw={"placeholder": "Identificación"})
-    apellidos = StringField('Apellidos', validators=[])
 
    
     submit = SubmitField('Enviar')
@@ -163,6 +162,6 @@ class UploadForm(FlaskForm):
 
 class horario_ent(FlaskForm):
     iden = IntegerField('Identificación', validators=[DataRequired()])
-    horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
+    horario = SelectField('Horario',choices=[('09:00-10:30', '09:00-10:30'), ('15:30-17:00', '15:30-17:00'),('17:00-18:30', '17:00-18:30'),('18:30-20:00', '18:30-20:00')],default = '',render_kw={}, id='horario')
 
     submit = SubmitField('Submit')

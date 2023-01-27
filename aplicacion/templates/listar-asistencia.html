@@ -66,13 +66,13 @@
 
         </table>
         <h6>
-          HISTORIAL ESTATURA
+          ASISTENCIA
         </h6>
         <table class="table table-bordered">
           <tr>
             <th>Nº IDENTIFICACION</th>
-            <th>ESTATURA EN cm</th>
-            <th>FECHA ESTATURA</th> </tr>
+            <th>HORARIO</th>
+            <th>FECHA ASISTENCIA</th> </tr>
           {% for cat in data1 %}
 
           <tr>
@@ -84,47 +84,12 @@
         </table>
 
 
-        <h6>
-          HISTORIAL PESO
-        </h6>
-        <table class="table table-bordered">
-          <tr>
-            <th>Nº IDENTIFICACION</th>
-            <th>PESO EN Kg</th>
-            <th>FECHA PESO</th></tr>
-          {% for cat in data2 %}
-
-          <tr>
-            <td>{{cat.0}}</td>
-            <td>{{cat.1}}</td>
-            <td>{{cat.2}}</td>
-          </tr>
-          {% endfor %}
-        </table>
-
-
-        <h6>
-          HISTORIAL FLEXIBILIDAD
-        </h6>
-        <table class="table table-bordered">
-          <tr>
-            <th>Nº IDENTIFICACION</th>
-            <th>GRADO FLEXIBILIDAD</th>
-            <th>FECHA FLEXIBILIDAD</th></tr>
-          {% for cat in data4 %}
-
-          <tr>
-            <td>{{cat.0}}</td>
-            <td>{{cat.1}}</td>
-            <td>{{cat.2}}</td>
-          </tr>
-          {% endfor %}
-        </table>   
+      
         
 
 
         <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
-          <a href="{{ url_for('busc_alumno1') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
+          <a href="{{ url_for('busc_asistencia') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>
         </div>
 </body>
 
