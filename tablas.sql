@@ -274,3 +274,16 @@ UPDATE alumno_foto SET iden=1753962768 WHERE id=3;
 UPDATE alumno_foto SET foto='16734810465852184358532016283108.jpg' WHERE id=4;
 
 UPDATE alumno_foto SET iden=1720705209 WHERE id=4;
+
+
+CREATE TABLE `apolo`.`posicion_camp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombres` VARCHAR(45) NULL,
+  `academia` VARCHAR(45) NULL,
+  `ubicacion` VARCHAR(45) NULL,
+  `puntos` INT NULL,
+  `obs` VARCHAR(95) NULL,
+  PRIMARY KEY (`id`));
+  
+ALTER TABLE `apolo`.`posicion_camp` 
+CHANGE COLUMN `puntos` `puntos` VARCHAR(45) NULL DEFAULT NULL ;

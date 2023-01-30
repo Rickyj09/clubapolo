@@ -165,3 +165,9 @@ class horario_ent(FlaskForm):
     horario = SelectField('Horario',choices=[('09:00-10:30', '09:00-10:30'), ('15:30-17:00', '15:30-17:00'),('17:00-18:30', '17:00-18:30'),('18:30-20:00', '18:30-20:00')],default = '',render_kw={}, id='horario')
 
     submit = SubmitField('Submit')
+
+
+class Upload_excel(FlaskForm):
+    mens = StringField('Mensaje', validators=[],render_kw={"placeholder": ""})
+    
+    submit = SubmitField('Submit')

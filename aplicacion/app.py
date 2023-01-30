@@ -15,10 +15,13 @@ from os import listdir
 from flask_login import LoginManager, login_user, logout_user, login_required,\
     current_user
 
-
+from sqlalchemy import create_engine
 from aplicacion.forms import LoginForm, FormUsuario
 import pdfkit
 import os
+import pymysql
+import csv
+import pandas as pd
 
 
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
@@ -701,3 +704,30 @@ def perfil(username):
 def load_user(user_id):
     from aplicacion.models import Usuarios
     return Usuarios.query.get(int(user_id))
+
+
+
+
+@app.route('/import_csv')
+def import_csv():
+    with open('test.csv', 'r') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip the header row
+        print(reader)
+        for row in reader:
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO posicion_camp (nombres, academia, ubicacion, puntos, obs) VALUES (%s, %s, %s, %s, %s)'%(str(row[0]),str(row[0]),str(row[2]),str(row[3]),str(row[4])))
+            mysql.connection.commit()
+    return 'CSV importado successfully'
+
+
+@app.route('/import_csv_p')
+@login_required
+def import_csv_p():
+    df = pd.read_excel("data.xlsx")
+    engine = create_engine("mysql://root:1234@localhost/apolo")
+    df.to_sql(name='posicion_camp1', con=engine, if_exists='replace', index=False)
+    return redirect(url_for("inicio"))
+
+
+
