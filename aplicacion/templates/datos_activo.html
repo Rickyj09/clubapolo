@@ -9,7 +9,7 @@
     
     {{ form.csrf_token }}
     
-    <h2>DATOS DEL ALUMNO ASCENSO CINTURÓN</h2>
+    <h2>DATOS DEL ALUMNO ESTATUS</h2>
 
     <hr>
     
@@ -23,26 +23,15 @@
 
  
 
+
     <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
-      {{ form.cinturon.label }} {{ form.cinturon(class_="form-control") }}
-      {% for error in form.cinturon.errors %}
-      <span style="color: red;"> {{ error }} </span>
-      {% endfor %}
-    </div>
-    <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
-      {{ form.cin_aval.label }} {{ form.cin_aval(class_="form-control") }}
-      {% for error in form.cin_aval.errors %}
-      <span style="color: red;"> {{ error }} </span>
-      {% endfor %}
-    </div>
-    <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
-      {{ form.cin_aval1.label }} {{ form.cin_aval1(class_="form-control") }}
-      {% for error in form.cin_aval1.errors %}
+      {{ form.status.label }} {{ form.status(class_="form-control") }}
+      {% for error in form.status.errors %}
       <span style="color: red;"> {{ error }} </span>
       {% endfor %}
     </div>
 
-
+   
 
     <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
       {{ form.hidden_tag() }}

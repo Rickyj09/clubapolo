@@ -9,7 +9,7 @@ from wtforms import StringField, SubmitField, PasswordField, TextAreaField, File
 from wtforms import FloatField
 from wtforms.validators import DataRequired, Email, Length, ValidationError,AnyOf
 from wtforms.fields.html5 import DateField
-from flask_wtf.file import FileField, FileRequired
+from flask_wtf.file import FileField, FileRequired,FileAllowed
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Required
 
@@ -87,11 +87,14 @@ class alumno(FlaskForm):
     telefono2 = StringField('Teléfono Movil', validators=[])
     status = SelectField('Status',choices=[('Activo', 'Activo'), ('Inactivo', 'Inactivo')],default = 'Activo',render_kw={}, id='status')
     email = EmailField('Email')
-    cinturon = RadioField(u'Cinturón', choices=[('Blanco', 'Blanco 10mo Kup'), ('Blanco-Amarillo', 'Blanco Puntas Amarillas 9no Kup'), ('Amarillo', 'Amarillo 8vo Kup'), ('Amarillo-Verde', 'Amarillo punta Verde 7mo Kup'), ('Verde', 'Verde 6to Kup'), ('Verde-Azul', 'Verde punta Azul 5to Kup'), ('Azul', 'Azul 4to Kup'), ('Azul-Rojo', 'Azul punta Roja 3er Kup'), ('Rojo', 'Rojo 2do Kup'), ('Rojo-Negro', 'Rojo punto Negro 1er Kup'),('1er Dan', '1er Dan'), ('2do Dan', '2do Dan'), ('3er Dan', '3er Dan'), ('4to Dan', '4to Dan'), ('5to Dan', '5to Dan'), ('6to Dan', '6to Dan'), ('7mo Dan', '7to Dan'), ('8vo Dan', '8vo Dan'), ('9no Dan', '9no Dan'), ('10mo Dan', '10mo Dan')], default='C', render_kw={}, id='conf_caratula')
+    cinturon = RadioField(u'Cinturón', choices=[('Blanco', 'Blanco 10mo Kup'), ('Blanco-Amarillo', 'Blanco Puntas Amarillas 9no Kup'), ('Amarillo', 'Amarillo 8vo Kup'), ('Amarillo-Verde', 'Amarillo punta Verde 7mo Kup'), ('Verde', 'Verde 6to Kup'), ('Verde-Azul', 'Verde punta Azul 5to Kup'), ('Azul', 'Azul 4to Kup'), ('Azul-Rojo', 'Azul punta Roja 3er Kup'), ('Rojo', 'Rojo 2do Kup'), ('Rojo-Negro', 'Rojo punto Negro 1er Kup')], default='C', render_kw={}, id='conf_caratula')
+    cin_aval = RadioField(u'NACIONAL', choices=[('N/A','N/A'),('Negro','Negro'),('1er Dan', '1er Dan'), ('2do Dan', '2do Dan'), ('3er Dan', '3er Dan'), ('4to Dan', '4to Dan'), ('5to Dan', '5to Dan'), ('6to Dan', '6to Dan'), ('7mo Dan', '7to Dan'), ('8vo Dan', '8vo Dan'), ('9no Dan', '9no Dan'), ('10mo Dan', '10mo Dan')], default='C', render_kw={}, id='conf_aval')
+    cin_aval1 = RadioField(u'INTERNACIONAL', choices=[('N/A','N/A   '),('Negro','Negro'),('1er Dan', '1er Dan'), ('2do Dan', '2do Dan'), ('3er Dan', '3er Dan'), ('4to Dan', '4to Dan'), ('5to Dan', '5to Dan'), ('6to Dan', '6to Dan'), ('7mo Dan', '7to Dan'), ('8vo Dan', '8vo Dan'), ('9no Dan', '9no Dan'), ('10mo Dan', '10mo Dan')], default='C', render_kw={}, id='conf_aval')
     horario = SelectField('Horario',choices=[('1', '09:00-10:30'), ('2', '15:30-17:00'),('3', '17:00-18:30'),('4', '18:30-20:00')],default = '',render_kw={}, id='horario')
     peso = StringField('Peso Kg', validators=[])
     estatura = StringField('Estatura cm', validators=[])
     flexibilidad = StringField('Nivel de flexibilidad', validators=[])
+    foto = FileField('Foto', validators=[FileAllowed('Solo se permiten imágenes')])
        
     submit = SubmitField('Enviar')
 

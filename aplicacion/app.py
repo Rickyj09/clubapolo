@@ -145,7 +145,7 @@ def upload():
         f = form.photo.data
         filename = secure_filename(f.filename)
         f.save(app.root_path+"/static/img/subidas/"+filename)
-        return redirect(url_for('inicio_foto'))
+        return redirect(url_for('home'))
     return render_template('upload.html', form=form)
 
 
@@ -280,6 +280,13 @@ def alumno_new():
         cursor = mysql.connection.cursor()
         cursor.execute('select CURDATE()')
         fecha_log = cursor.fetchone()
+        foto = request.files['foto']
+        filename = secure_filename(foto.filename)
+        foto.save(app.root_path+"/static/fotos/"+filename)
+        foto = filename
+        cursor = mysql.connection.cursor()
+        cursor.execute('insert into alumno_foto (iden,foto) VALUES (%s,%s)',(iden,foto))
+        mysql.connection.commit()
         cursor.execute('insert into alumno (apellido_p,apellido_m,identificacion,tipo_iden,nombres,est_civil,fecha_nacimiento,fecha_ingreso,genero, ocupacion, status, tipo_sangre, nivel_educacion,direccion,telefono1,telefono2,mail,fecha_log) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                        (apellido1, apellido2, iden, tipo_iden, nombres, est_civil, fec_nac,fec_ingreso, sexo,ocupacion, status,tipo_s,Nivel_edu,direccion, telefono1, telefono2, email,fecha_log))
         mysql.connection.commit()
@@ -291,7 +298,7 @@ def alumno_new():
         cursor.execute('insert into estatura (id_alumno,valor_estatura,fecha) VALUES (%s,%s,%s)',(iden, estatura, fecha))
         cursor.execute('insert into flexibilidad (id_alumno,valor_flexibilidad,fecha) VALUES (%s,%s,%s)',(iden, flexibilidad, fecha))
         mysql.connection.commit()
-        return render_template("inicio_foto.html", form=form)
+        return render_template("home.html", form=form)
     return render_template("alumno_new.html", form=form)
 
 @app.route('/busc_alumno', methods = ['POST', 'GET'])
@@ -395,10 +402,14 @@ def datos_cinturon():
     if request.method == 'POST':
         iden = request.form['iden']
         cinturon = request.form['cinturon']
+        cin_aval = request.form['cin_aval']
+        cin_aval1 = request.form['cin_aval1']
         cursor = mysql.connection.cursor()
         cursor.execute('select CURDATE()')
         fecha = cursor.fetchone()
         cursor.execute('insert into cinturon (id_alumno,color,fecha) VALUES (%s,%s,%s)',(iden, cinturon, fecha))
+        cursor.execute('insert into cintu_nacional (iden,dan,fecha) VALUES (%s,%s,%s)',(iden, cin_aval, fecha))
+        cursor.execute('insert into cintu_internacional (id_alumno,dan,fecha) VALUES (%s,%s,%s)',(iden, cin_aval1, fecha))
         mysql.connection.commit()
         return render_template("home_alumn.html", form=form)
     return render_template("datos_cinturon.html", form=form)
@@ -420,6 +431,29 @@ def datos_peso():
         return render_template("home_alumn.html", form=form)
     return render_template("datos_peso.html", form=form)
 
+
+@app.route('/datos_activo', methods=["get", "post"])
+@login_required
+def datos_activo():
+    form = alumno()
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+        iden = request.form['iden']
+        status = request.form['status']
+        cursor = mysql.connection.cursor()
+        cursor.execute('update alumno SET status = %s where identificacion = %s',(status,iden))
+        mysql.connection.commit()
+        return render_template("home_alumn.html", form=form)
+    return render_template("datos_activo.html", form=form)
+
+
+@app.route('/listar_alumno', methods=["get", "post"])
+@login_required
+def listar_alumno():
+    cursor = mysql.connection.cursor()
+    cursor.execute('select identificacion, nombres, apellido_p,apellido_m,status from alumno where status = "ACTIVO"')
+    data = cursor.fetchall()
+    return render_template("listar_alumno.html", data=data)
 
 @app.route('/datos_estatura', methods=["get", "post"])
 @login_required
@@ -724,9 +758,12 @@ def import_csv():
 @app.route('/import_csv_p')
 @login_required
 def import_csv_p():
-    df = pd.read_excel("data.xlsx")
+    df = pd.read_excel("articulos.xlsx")
+    df1 = pd.read_excel("data1.xlsx")
     engine = create_engine("mysql://root:1234@localhost/apolo")
-    df.to_sql(name='posicion_camp1', con=engine, if_exists='replace', index=False)
+    engine1 = create_engine("mysql://root:1234@localhost/apolo")
+    df.to_sql(name='articulos', con=engine, if_exists='replace', index=False)
+    df1.to_sql(name='posicion_test', con=engine1, if_exists='replace', index=False)
     return redirect(url_for("inicio"))
 
 
