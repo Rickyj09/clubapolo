@@ -35,6 +35,8 @@
         </h6>
 
 
+        
+
             {% if data3 %}
 		   		    <td><img width="100" src="{{url_for('static',filename='fotos/')}}{{data3.0}}"/>
 		   	    {% else %}
@@ -42,6 +44,50 @@
 		   	    {% endif %}
 
 
+             <table class="table table-bordered">
+              <tr>
+                <th>CATEGORIA CINTURON</th>
+                <th>CATEGORIA EDAD</th>
+                
+              </tr>
+              <tr>
+            <td>    
+            {% if color.0 == 'Blanco' or color.0 == 'Blanco-Amarillo' or color.0 == 'Amarillo' or color.0 == 'Amarillo-Verde' or color.0 == 'Verde' or color.0 == 'Verde-Azul' %}
+             <p>Novato</p>
+            {% else %}
+              {% if color.0 == 'Azul' or color.0 == 'Azul-Rojo' or color.0 == 'Rojo'  %}
+                <p>Intermedio</p>
+              {% else %} 
+                  <p>Avanzado</p>
+              {% endif %}  
+            {% endif %}
+          </td> 
+          <td>
+            {% if edad.0 == 4 or edad.0 == 5 %}
+                <p>Pre Infantil 1</p>
+            {% elif edad.0 == 6 or edad.0 == 7 %}
+                <p>Pre Infantil 2</p>
+            {% elif edad.0 == 8 or edad.0 == 9 %}
+                <p>Infantil A</p>
+            {% elif edad.0 == 10 or edad.0 == 11 %}
+                <p>Infantil B</p>
+            {% elif edad.0 > 12 and edad.0 < 14  %}
+                <p>Cadete</p>
+            {% elif edad.0 >= 14 and edad.0 < 17 %}
+                <p>Junior</p>
+            {% elif edad.0 >= 17 and edad.0 < 40 %}
+                <p>Senior</p>
+            {% elif edad.0 >= 40 and edad.0 < 50 %}
+                <p>Master 1</p>
+            {% elif edad.0 >= 50 %}
+                <p>Master 2</p>
+            {% else %}
+                {% if edad.0 >= 60 %}
+                    <p>Master 3</p>
+                {% endif %}
+            {% endif %}
+            </td>
+            </tr>
         <table class="table table-bordered">
           <tr>
             <th>Nº IDENTIFICACION</th>
@@ -122,6 +168,8 @@
         </table>   
         
 
+
+        
 
         <div class="form-group col-xs-12 col-sm-12 col-md-3  position-relative">
           <a href="{{ url_for('busc_alumno1') }}" class="btn btn-dark btn-sm rounded-0">Volver</a>

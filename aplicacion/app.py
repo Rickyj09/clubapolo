@@ -360,7 +360,16 @@ def busc_alumno1():
         cursor.execute("""select foto from alumno_foto WHERE iden = %s""",[iden])
         data3 = cursor.fetchone()
         print(data3)
-        return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3)
+        cursor.execute("""SELECT color FROM apolo.cinturon
+                            where fecha = (SELECT MAX(fecha) FROM cinturon where id_alumno = %s)
+                            limit 1 ;""",[iden])
+        color = cursor.fetchone()
+        print(color)
+        cursor.execute("""SELECT (TIMESTAMPDIFF(YEAR,fecha_nacimiento,CURDATE())) AS edad FROM apolo.alumno
+                            where identificacion = %s;""",[iden])
+        edad = cursor.fetchone()
+        print(edad)
+        return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3,color=color,edad=edad)
     return render_template("bus_alumno1.html", form=form)
 
 
