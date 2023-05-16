@@ -22,6 +22,7 @@ import os
 import pymysql
 import csv
 import pandas as pd
+from flask_mail import Mail, Message
 
 
 UPLOAD_FOLDER = os.path.abspath("./static/uploads/")
@@ -40,6 +41,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'jerez.ricardo09@gmail.com'
+app.config['MAIL_PASSWORD'] = 'uimgymohuknlsari'
+
+mail = Mail(app)
 
 # Mysql Connection
 app.config['MYSQL_HOST'] = 'localhost'
@@ -92,6 +102,28 @@ def nosotros():
     return render_template("nosotros.html")
 
 
+@app.route('/profesores')
+def profesores():
+    return render_template("profesores.html")
+
+@app.route('/contactos', methods=['GET', 'POST'])
+def contactos():
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+        
+        # Procesar los datos y enviar un correo electrónico
+        msg = Message('Mensaje de ' + name, sender=email, recipients=['jerez.ricardo09@gmail.com'])
+        msg.body = message
+        mail.send(msg)
+
+        # Devolver una respuesta al usuario
+        return render_template('inicio.html')
+    else:
+        # Renderizar el formulario HTML
+        return render_template('contactos.html')
 
 @app.route('/historia')
 def historia():
@@ -360,16 +392,27 @@ def busc_alumno1():
         cursor.execute("""select foto from alumno_foto WHERE iden = %s""",[iden])
         data3 = cursor.fetchone()
         print(data3)
-        cursor.execute("""SELECT color FROM apolo.cinturon
+        cursor.execute("""SELECT color FROM cinturon
                             where fecha = (SELECT MAX(fecha) FROM cinturon where id_alumno = %s)
                             limit 1 ;""",[iden])
         color = cursor.fetchone()
         print(color)
-        cursor.execute("""SELECT (TIMESTAMPDIFF(YEAR,fecha_nacimiento,CURDATE())) AS edad FROM apolo.alumno
+        cursor.execute("""SELECT (TIMESTAMPDIFF(YEAR,fecha_nacimiento,CURDATE())) AS edad FROM alumno
                             where identificacion = %s;""",[iden])
         edad = cursor.fetchone()
+        cursor.execute("""select valor_peso from peso where fecha = (SELECT MAX(fecha) FROM peso where id_alumno = %s)
+                            limit 1 ;""",[iden])
+        peso = cursor.fetchone()
+        cursor.execute("""select genero from alumno WHERE identificacion = %s""",[iden])
+        genero = cursor.fetchone()
+        cursor.execute('SELECT nombre_cat FROM categorias WHERE genero = %s AND edad_min <= %s AND edad_max >= %s AND peso_min <= %s AND peso_max >= %s',(genero, edad, edad, peso, peso))
+        categoria = cursor.fetchone()
+        cursor.execute('SELECT nombre_cat1 FROM categorias WHERE genero = %s AND edad_min <= %s AND edad_max >= %s AND peso_min <= %s AND peso_max >= %s',(genero, edad, edad, peso, peso))
+        cate1 = cursor.fetchone()
+        print(edad,categoria,cate1)
         print(edad)
-        return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3,color=color,edad=edad)
+        print(peso)
+        return render_template('listar-alumno1.html', data=data,data1=data1,data2=data2,data4=data4,data3=data3,color=color,edad=edad,categoria=categoria,cate1=cate1)
     return render_template("bus_alumno1.html", form=form)
 
 
